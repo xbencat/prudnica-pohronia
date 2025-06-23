@@ -97,9 +97,51 @@
         </div>
 
         <div class="responsive-iframe-container">
-            <iframe src="https://docs.google.com/spreadsheets/d/1P13wx5gNw7A92jaYK7rG22OxB7C-_h46qVx8PEumBh0/edit?usp=sharing&widget=true&headers=false&chrome=false&rm=minimal"></iframe>
+            <iframe id="scoreboard-iframe" src="https://docs.google.com/spreadsheets/d/1P13wx5gNw7A92jaYK7rG22OxB7C-_h46qVx8PEumBh0/preview?usp=sharing&widget=true&headers=false&chrome=false&rm=minimal&single=true"></iframe>
         </div>
+
     </div>
+
+    <script>
+        // Silent auto-refresh - preload in background and switch when ready
+        const iframe = document.getElementById('scoreboard-iframe');
+        const baseUrl = 'https://docs.google.com/spreadsheets/d/1P13wx5gNw7A92jaYK7rG22OxB7C-_h46qVx8PEumBh0/preview?usp=sharing&widget=true&headers=false&chrome=false&rm=minimal&single=true';
+
+        let isLoading = false;
+
+        function refreshScoreboard() {
+            if (isLoading) return; // Prevent multiple simultaneous refreshes
+
+            isLoading = true;
+
+            // Create a hidden iframe to preload the new content
+            const tempIframe = document.createElement('iframe');
+            tempIframe.style.display = 'none';
+            tempIframe.src = baseUrl + '&t=' + Date.now();
+
+            // When the new content is loaded, silently switch
+            tempIframe.onload = function() {
+                // Small delay to ensure content is fully rendered
+                setTimeout(() => {
+                    iframe.src = tempIframe.src;
+                    document.body.removeChild(tempIframe);
+                    isLoading = false;
+                }, 100);
+            };
+
+            // Handle loading errors
+            tempIframe.onerror = function() {
+                document.body.removeChild(tempIframe);
+                isLoading = false;
+            };
+
+            // Add temp iframe to document to start loading
+            document.body.appendChild(tempIframe);
+        }
+
+        // Start auto-refresh every 5 seconds
+        setInterval(refreshScoreboard, 15000);
+    </script>
 
 </body>
 </html>
