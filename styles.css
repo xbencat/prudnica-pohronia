@@ -1,0 +1,253 @@
+/* Base styles */
+body {
+    margin: 0;
+    padding: 4px 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.scoreboard-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header layout */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 5px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 18px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Live indicator */
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #e0e0e0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #d9534f;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.live-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #d9534f;
+    border-radius: 50%;
+    animation: flash 1.5s infinite;
+}
+
+/* Flashing animation for the dot */
+@keyframes flash {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.2;
+    }
+}
+
+/* QR Code Dropdown - Hidden on mobile by default */
+.qr-dropdown {
+    display: none;
+    position: relative;
+}
+
+.qr-toggle-btn {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.qr-toggle-btn:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.qr-toggle-btn.active {
+    background-color: #f0f0f0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* QR code icon design */
+.qr-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    background: repeating-linear-gradient(
+        45deg,
+        #333,
+        #333 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    border: 2px solid #333;
+    position: relative;
+}
+
+.qr-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background-color: #333;
+}
+
+/* QR dropdown content */
+.qr-dropdown-content {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 1000;
+    display: none;
+    min-width: 260px;
+}
+
+.qr-dropdown-content.show {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.qr-dropdown-content img {
+    width: 300px;
+    height: 300px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+}
+
+.qr-text {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* Iframe container */
+.responsive-iframe-container {
+    position: relative;
+    width: 100%;
+    height: 88vh;
+    min-height: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.responsive-iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Desktop/PC fullscreen styles */
+@media screen and (min-width: 769px) and (pointer: fine) {
+    body {
+        padding: 0;
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .scoreboard-wrapper {
+        max-width: none;
+        width: 83%;
+        margin: 0 auto;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-container {
+        flex-shrink: 0;
+        padding: 3px 5px;
+        margin-bottom: 0;
+        background-color: #f4f4f9;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    /* Show QR dropdown on desktop */
+    .qr-dropdown {
+        display: block;
+    }
+
+    .responsive-iframe-container {
+        flex: 1;
+        height: auto;
+        min-height: auto;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+    }
+}
+
+.mobile-domain {
+    display: flex; /* Hidden by default */
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #e0e0e0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #555;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Show only on mobile (<= 768px) */
+@media (max-width: 768px) {
+    .mobile-domain {
+        display: none;
+    }
+}

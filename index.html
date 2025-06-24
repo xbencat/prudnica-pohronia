@@ -4,128 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strieborná prúdnica pohronia 2025 (výsledky)</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 4px 10px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
-        .scoreboard-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-left: 5px;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
-            gap: 5px;
-            font-size: 18px;
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background-color: #fff;
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid #e0e0e0;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #d9534f;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #d9534f;
-            border-radius: 50%;
-            animation: flash 1.5s infinite;
-        }
-
-        /* Flashing animation for the dot */
-        @keyframes flash {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.2;
-            }
-        }
-
-        .responsive-iframe-container {
-            position: relative;
-            width: 100%;
-            height: 88vh; /* Default height */
-            min-height: 600px;
-            border-radius: 8px;
-            overflow: hidden; /* Ensures the iframe corners are rounded */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e0e0e0;
-        }
-
-        /* Desktop/PC fullscreen styles */
-        @media screen and (min-width: 769px) and (pointer: fine) {
-            body {
-                padding: 0;
-                margin: 0;
-                height: 100vh;
-                overflow: hidden;
-            }
-
-            .scoreboard-wrapper {
-                max-width: none;
-                width: 83%;
-                margin: 0 auto;
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .header-container {
-                flex-shrink: 0;
-                padding: 3px 5px;
-                margin-bottom: 0;
-                background-color: #f4f4f9;
-                border-bottom: 1px solid #e0e0e0;
-            }
-
-            .responsive-iframe-container {
-                flex: 1;
-                height: auto;
-                min-height: auto;
-                border-radius: 0;
-                box-shadow: none;
-                border: none;
-            }
-        }
-
-        .responsive-iframe-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <div class="scoreboard-wrapper">
         <div class="header-container">
             <strong>Strieborná prúdnica pohronia 2025</strong>
-            <div class="live-indicator">
-                <span class="live-dot"></span>
-                <span>LIVE</span>
+            <div class="header-right">
+                <div class="mobile-domain">dhzkozarovce.sk</div>
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    <span>LIVE</span>
+                </div>
+                <div class="qr-dropdown">
+                    <button class="qr-toggle-btn" id="qr-toggle">
+                        <span class="qr-icon"></span>
+                        <span>QR kód</span>
+                    </button>
+                    <div class="qr-dropdown-content" id="qr-content">
+                        <img src="qr-code.png" alt="QR Code">
+                        <div class="qr-text">
+                            Naskenujte pre mobilné zobrazenie
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -135,132 +38,7 @@
 
     </div>
 
-    <script>
-        // Device detection and URL configuration
-        const SPREADSHEET_URLS = {
-            mobile: 'https://docs.google.com/spreadsheets/d/1q4HsXc0OKLhAeRYTCNKtb8Hw2DS6jNTBOPQ4T1i6We4/preview?usp=sharing&widget=true&headers=false&chrome=false&rm=minimal&single=true',
-            desktop: 'https://docs.google.com/spreadsheets/d/1dJyo99Fi5mfcR82oTpaWIq8vuCE9AX9I863XDF2Ffjg/preview?usp=sharing&widget=true&headers=false&chrome=false&rm=minimal&single=true'
-        };
-
-        const iframe = document.getElementById('scoreboard-iframe');
-        let isLoading = false;
-        let currentDeviceType = null;
-
-        /**
-         * Detects if the current device is mobile based on multiple criteria
-         * @returns {boolean} True if mobile device, false if desktop
-         */
-        function isMobileDevice() {
-            // Check user agent for mobile patterns
-            const userAgent = navigator.userAgent.toLowerCase();
-            const mobilePatterns = [
-                /android/i,
-                /webos/i,
-                /iphone/i,
-                /ipad/i,
-                /ipod/i,
-                /blackberry/i,
-                /windows phone/i,
-                /opera mini/i,
-                /mobile/i
-            ];
-
-            const isMobileUA = mobilePatterns.some(pattern => pattern.test(userAgent));
-
-            // Check screen width (tablets and phones)
-            const isSmallScreen = window.innerWidth <= 768;
-
-            // Check for touch capability
-            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-            // Combine criteria: mobile if UA suggests mobile OR (small screen AND touch)
-            return isMobileUA || (isSmallScreen && isTouchDevice);
-        }
-
-        /**
-         * Gets the appropriate spreadsheet URL based on device type
-         * @returns {string} The appropriate spreadsheet URL
-         */
-        function getSpreadsheetUrl() {
-            const deviceType = isMobileDevice() ? 'mobile' : 'desktop';
-            return SPREADSHEET_URLS[deviceType];
-        }
-
-        /**
-         * Loads the iframe with the appropriate spreadsheet URL
-         * @param {boolean} force - Force reload even if device type hasn't changed
-         */
-        function loadSpreadsheet(force = false) {
-            const newDeviceType = isMobileDevice() ? 'mobile' : 'desktop';
-
-            // Only reload if device type changed or forced
-            if (force || newDeviceType !== currentDeviceType) {
-                currentDeviceType = newDeviceType;
-                const url = getSpreadsheetUrl();
-                iframe.src = url;
-                console.log(`Loaded ${newDeviceType} spreadsheet`);
-            }
-        }
-
-        /**
-         * Silent auto-refresh - preload in background and switch when ready
-         */
-        function refreshScoreboard() {
-            if (isLoading) return; // Prevent multiple simultaneous refreshes
-
-            isLoading = true;
-            const currentUrl = getSpreadsheetUrl();
-
-            // Create a hidden iframe to preload the new content
-            const tempIframe = document.createElement('iframe');
-            tempIframe.style.display = 'none';
-            tempIframe.src = currentUrl + '&t=' + Date.now();
-
-            // When the new content is loaded, silently switch
-            tempIframe.onload = function() {
-                // Small delay to ensure content is fully rendered
-                setTimeout(() => {
-                    iframe.src = tempIframe.src;
-                    document.body.removeChild(tempIframe);
-                    isLoading = false;
-                }, 100);
-            };
-
-            // Handle loading errors
-            tempIframe.onerror = function() {
-                document.body.removeChild(tempIframe);
-                isLoading = false;
-                console.error('Failed to refresh scoreboard');
-            };
-
-            // Add temp iframe to document to start loading
-            document.body.appendChild(tempIframe);
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSpreadsheet(true);
-        });
-
-        // Handle orientation changes and resize events
-        window.addEventListener('resize', function() {
-            // Debounce resize events
-            clearTimeout(window.resizeTimeout);
-            window.resizeTimeout = setTimeout(() => {
-                loadSpreadsheet();
-            }, 250);
-        });
-
-        // Handle orientation change specifically for mobile devices
-        window.addEventListener('orientationchange', function() {
-            setTimeout(() => {
-                loadSpreadsheet();
-            }, 500); // Wait for orientation change to complete
-        });
-
-        // Start auto-refresh every 30 seconds
-        setInterval(refreshScoreboard, 30000);
-    </script>
+    <script src="scoreboard.js"></script>
 
 </body>
 </html>
